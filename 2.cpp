@@ -141,7 +141,8 @@ public:
         string name;
         string designation;
         while (input_file) {
-            cin >> name >> designation; 
+            getline(input_file, name, ',');
+            getline(input_file, designation, ','); 
             insert(name, designation);
         }
         
