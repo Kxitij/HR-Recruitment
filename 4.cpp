@@ -9,79 +9,71 @@ struct Employee {
     Employee* next;
 };
 
-int RankDesignation(string desi){
-    if (desi=="CEO"||desi=="ceo") return 5;
-    if (desi=="COO"||desi=="coo") return 4;
-    if (desi=="Manager"||desi=="manager") return 3;
-    if (desi=="Assistant Manager"||desi=="assistant manager") return 2;
-    if (desi=="Intern"||desi=="intern") return 1;
-     
+int get_priority(string designation) {
+    if (designation == "CEO") {
+        return 1;
+    } else if (designation == "Manager") {
+        return 2;
+    } else if (designation == "Assistant Manager") {
+        return 3;
+    } else if (designation == "Intern") {
+        return 4;
+    } else {
+        return 5; // unrecognized designation
+    }
+}
+
+Employee* merge(Employee* left, Employee* right) {
+    Employee* dummy = new Employee{"", "", nullptr};
+    Employee* tail = dummy;
     
-}
-Employee*sort_list(Employee* head)
-{
-Employee *ptr1, *ptr2, *temp;
-ptr1 = head;
-while(ptr1 -> next != NULL)
-{
- ptr2 = ptr1 -> next;
- int des1 = RankDesignation(ptr1->designation);
- int des2 = RankDesignation(ptr2->designation);
- while(ptr2 != NULL)
- {
- if(des1> des2)
- { temp->designation=ptr1->designation;
-   temp->name=ptr1->name;
-   ptr1->designation=ptr2->designation;
-   ptr1->name=ptr2->name;
-   ptr2->designation=temp->designation;
-   ptr2->name=temp->name;
- 
- }
- ptr2 = ptr2 -> next;
- }
- ptr1 = ptr1 -> next;
-
- }
-return head; // Had to be added 
+    while (left != nullptr && right != nullptr) {
+        if (get_priority(left->designation) <= get_priority(right->designation)) {
+            tail->next = left;
+            left = left->next;
+        } else {
+            tail->next = right;
+            right = right->next;
+        }
+        tail = tail->next;
+    }
+    
+    if (left != nullptr) {
+        tail->next = left;
+    } else {
+        tail->next = right;
+    }
+    
+    Employee* result = dummy->next;
+    delete dummy;
+    return result;
 }
 
-Employee* sortLinkedList(Employee* head) {
-    if (head == NULL || head->next == NULL) {
+Employee* merge_sort(Employee* head) {
+    if (head == nullptr || head->next == nullptr) {
         return head;
     }
-
-    bool swapped;
-    Employee* ptr1;
-    Employee* lptr = NULL;
-
-    do {
-        swapped = false;
-        ptr1 = head;
-
-        while (ptr1->next != lptr) {
-            if (RankDesignation(ptr1->designation) < RankDesignation(ptr1->next->designation)) {
-    //             string temp_name = a->name;
-    // string temp_desig = a->designation;
-    // a->name = b->name;
-    // a->designation = b->designation;
-    // b->name = temp_name;
-    // b->designation = temp_desig;
-                string temp_name = ptr1->name;
-                string temp_desig = ptr1->designation;
-                ptr1->designation = ptr1->next->designation;
-                ptr1->name = ptr1->next->name;
-                ptr1->next->designation = temp_desig;
-                ptr1->next->name = temp_name;
-                swapped = true;
-            }
-            ptr1 = ptr1->next;
-        }
-        lptr = ptr1;
-    } while (swapped);
-
-    return head;
+    
+    // split list in half
+    Employee* slow = head;
+    Employee* fast = head->next;
+    while (fast != nullptr && fast->next != nullptr) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    Employee* right = slow->next;
+    slow->next = nullptr;
+    
+    // sort left and right halves
+    Employee* left_sorted = merge_sort(head);
+    Employee* right_sorted = merge_sort(right);
+    
+    // merge sorted halves
+    return merge(left_sorted, right_sorted);
 }
+
+
+
 
 
 
@@ -134,7 +126,7 @@ int main() {
     }
     inFile.close();
     print(head);
-    head2 = sortLinkedList(head);
+    head2 = merge_sort(head);
     print(head2);
     saveToFile(head2, "sorted_employees.txt");
     
