@@ -1,5 +1,0 @@
-name,desognation
-chirag, intern
-kshitij,manager
-rahul,assistant manager
-vinayak,CEO
