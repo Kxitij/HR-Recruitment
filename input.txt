@@ -1,2 +1,4 @@
-kshitij,Assistant Manager
-chirag,Manager
+kshitij , Manager
+chirag , Intern
+vinayak , Manager
+ambika , Assintant Manager
